@@ -1,13 +1,23 @@
-// # ooborder Root Anchor
+// # ooborder Root Subsystem Anchor
 //
-// Logline: Top-level anchor re-exporting options, core logic, render, and ipc subsystems.
+// Logline: Sovereign terminal panel border and box frame formatting engine.
 //
-// Setup: Pure shim re-exporting all ooborder subsystem anchors.
+// Setup: Root barrel shim re-exporting options, core logic, render, and ipc subsystems.
 //
 // Beats:
 //   1. Re-export options parsing subsystem.
-//   2. Re-export core ooborder execution engine.
+//   2. Re-export core panel border composition engine.
 //   3. Re-export render formatting subsystem.
 //   4. Re-export Model Context Protocol (MCP) IPC subsystem.
 
-import "main.oo";
+import "core/anchor.oo";
+import "render/anchor.oo";
+import "ipc/anchor.oo";
+
+pub fn ooborder_version() -> String {
+    return "0.2.0";
+}
+
+pub fn ooborder_banner() -> String {
+    return "ooborder v0.2.0 (openOODA sovereign panel borders)";
+}

@@ -54,17 +54,21 @@ ooborder-uninstall
 ## 2. CLI Usage
 
 ```
-usage: ooborder [options] [ARGUMENTS]...
+usage: ooborder [options] [FILE]
 
-Wraps stdin text blocks inside configurable border frames with titles.
+Wraps stdin or file text blocks inside configurable border frames with titles.
 
 Options:
-  -h, --help           display this help and exit
-  -v, --version        output version information and exit
-      --json           output formatted as JSON Lines
+  -s, --style <NAME>   border style: single, double, rounded, thick, ascii, block [default: rounded]
+  -t, --title <TEXT>   optional title banner in the top border
+  -p, --padding <N>    horizontal padding spaces [default: 1]
+      --align <MODE>   text alignment: left, center, right [default: left]
+      --json           output wrapped box metadata and lines as JSON
       --color <WHEN>   colorize output: auto, always, never [default: auto]
       --theme <NAME>   override active oote palette
       --mcp            run as Model Context Protocol stdio server
+  -h, --help           display this help and exit
+  -v, --version        output version information and exit
 ```
 
 ---
@@ -80,6 +84,10 @@ Options:
 ## 4. Model Context Protocol (MCP)
 
 When invoked with `--mcp`, `ooborder` runs a JSON-RPC 2.0 stdio server providing structured tools for AI coding agents:
+
+* **`border_wrap`**: Wraps arbitrary multiline text into specified border style, title, padding, and alignment.
+* **`border_styles`**: Lists all available border frame presets with their box-drawing character components.
+* **`border_stats`**: Analyzes text block dimensions (line count, maximum line width) and required bounding frame size.
 
 ```bash
 ooborder --mcp

@@ -1,0 +1,21 @@
+// # ooborder Core Anchor
+//
+// Logline: Consolidates and re-exports box border styles and composition layout engines.
+//
+// Setup: Exports border character mappings, repetition utilities, and box formatters.
+//
+// Beats:
+//   1. Re-export box-drawing character definitions and style lookups.
+//   2. Re-export string repetition and text alignment utilities.
+//   3. Re-export complete panel border frame composition engine.
+
+import "core/border_chars.oo";
+import "core/box_builder.oo";
+
+pub fn core_subsystem_version() -> String {
+    return "0.2.0";
+}
+
+pub fn core_subsystem_description() -> String {
+    return "ooborder pure openOODA core box layout and panel border subsystem";
+}

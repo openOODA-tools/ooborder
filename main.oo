@@ -1,52 +1,89 @@
-// # ooborder Main Entry Point
+// # ooborder Main Entry Point - Sovereign Panel Border
 //
-// Logline: Wraps stdin text blocks inside configurable border frames with titles.
+// Logline: Ingests text and wraps contents inside customizable panel borders with titles.
 //
 // Setup: Demands explicit capability tokens and standard argument list.
 //
 // Beats:
 //   1. Parse command-line options and dispatch --help, --version, or --mcp.
-//   2. Execute capability-bounded ooborder operations.
-//   3. Format and output structured results to standard output.
+//   2. Ingest payload from referenced file, inline argument, or standard input.
+//   3. Dispatch frame composition engine and emit framed panel or JSON object.
+
+import "core/box_builder.oo";
+import "render/border_theme.oo";
+import "ipc/json_field.oo";
+import "ipc/border_opts.oo";
+import "ipc/mcp_serve.oo";
 
 fn render_help() -> String {
-    return "ooborder 0.1.0 (openOODA sovereign theme & styling)\n"
-        + "usage: ooborder [options] [ARGUMENTS]...\n\n"
-        + "Wraps stdin text blocks inside configurable border frames with titles.\n\n"
+    return "ooborder 0.2.0 (openOODA sovereign panel borders)\n"
+        + "usage: ooborder [options] [TEXT_OR_FILE]\n\n"
+        + "Wraps text blocks inside customizable border frames with optional titles.\n\n"
         + "Options:\n"
-        + "  -h, --help           display this help and exit\n"
-        + "  -v, --version        output version information and exit\n"
-        + "      --json           output formatted as JSON Lines\n"
-        + "      --color <WHEN>   colorize output: auto, always, never [default: auto]\n"
-        + "      --theme <NAME>   override active oote palette\n"
-        + "      --mcp            run as Model Context Protocol stdio server\n";
+        + "  -h, --help               display this help and exit\n"
+        + "  -v, --version            output version information and exit\n"
+        + "  -s, --style <NAME>       border style: single, double, rounded, thick, ascii, block [default: single]\n"
+        + "  -t, --title <STR>        optional header banner embedded in top frame border\n"
+        + "  -p, --padding <N>        horizontal padding margin spaces [default: 1]\n"
+        + "      --align <MODE>       text alignment: left, center, right [default: left]\n"
+        + "  -f, --file <PATH>        read payload text from file\n"
+        + "      --json               output telemetry and framed result as JSON\n"
+        + "      --mcp                run as Model Context Protocol stdio server\n";
 }
 
-fn render_version() -> String {
-    return "ooborder 0.1.0 (openOODA sovereign theme & styling)\n";
-}
+pub fn main(
+    fs: &FsReadCap,
+    proc_cap: &ProcessCap,
+    env: &EnvCap,
+    args: List[String]
+) -> Result[Int, String] {
+    let opts: BorderOpts = parse_border_args(args);
 
-fn main(args: List[String]) -> Int {
-    let num_args: Int = list_len(args);
-    let mut i: Int = 0;
-
-    while i < num_args {
-        let arg: String = list_get(args, i);
-        if arg == "-h" || arg == "--help" {
-            print(render_help());
-            return 0;
-        }
-        if arg == "-v" || arg == "--version" {
-            print(render_version());
-            return 0;
-        }
-        if arg == "--mcp" {
-            print("{\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"ready\",\"tool\":\"ooborder\"}}\n");
-            return 0;
-        }
-        i = i + 1;
+    if opts.action == "help" {
+        print(render_help());
+        return Ok(0);
     }
 
-    print("ooborder: sovereign capability-bounded utility ready\n");
-    return 0;
+    if opts.action == "version" {
+        println("ooborder 0.2.0 (openOODA sovereign panel borders)");
+        return Ok(0);
+    }
+
+    if opts.action == "mcp" {
+        run_mcp_server(fs);
+        return Ok(0);
+    }
+
+    let mut payload: String = opts.input_text;
+    if chars_len(opts.file_path) > 0 {
+        let f_res: Result[String, String] = read_file(fs, opts.file_path);
+        if !f_res.is_ok() {
+            println("ooborder: cannot open '" + opts.file_path + "': No such file or read error");
+            return Ok(1);
+        }
+        payload = match f_res { Ok(s) => s, Err(_) => "" };
+    }
+
+    if chars_len(payload) == 0 {
+        let stdin_res: Result[String, String] = oo_read_stdin_chunk(fs, 65536);
+        if stdin_res.is_ok() {
+            payload = match stdin_res { Ok(s) => s, Err(_) => "" };
+        }
+    }
+
+    let trimmed: String = str_trim(payload);
+    if chars_len(trimmed) == 0 {
+        println("ooborder: missing text operand\nTry 'ooborder --help' for more information.");
+        return Ok(1);
+    }
+
+    let boxed: String = render_box(trimmed, opts.style, opts.title, opts.pad_x, opts.pad_y, opts.align);
+
+    if opts.json_mode {
+        println(render_box_json(trimmed, json_escape_string(boxed), opts.style, opts.title));
+        return Ok(0);
+    }
+
+    println(boxed);
+    return Ok(0);
 }

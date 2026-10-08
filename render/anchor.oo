@@ -1,0 +1,20 @@
+// # ooborder Render Subsystem Anchor
+//
+// Logline: Consolidates and re-exports presentation formatters for ooborder.
+//
+// Setup: Exports ANSI terminal themes and JSON serializers for framed outputs.
+//
+// Beats:
+//   1. Re-export terminal ANSI palette escape sequences.
+//   2. Re-export box output JSON serializers.
+//   3. Re-export available border style catalog serializers.
+
+import "render/border_theme.oo";
+
+pub fn render_subsystem_version() -> String {
+    return "0.2.0";
+}
+
+pub fn render_subsystem_description() -> String {
+    return "ooborder pure openOODA render and theme subsystem";
+}

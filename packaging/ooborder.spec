@@ -1,5 +1,5 @@
 Name:           ooborder
-Version:        0.1.0
+Version:        0.2.0
 Release:        1%{?dist}
 Summary:        Wraps stdin text blocks inside configurable border frames with titles.
 License:        ASL 2.0
@@ -24,5 +24,5 @@ install -m 0755 %{SOURCE1} %{buildroot}/usr/bin/ooborder-uninstall
 /usr/bin/ooborder-uninstall
 
 %changelog
-* Wed Oct 07 2026 openOODA-tools <ops@openooda.org> - 0.1.0-1
-- Initial sovereign blueprint scaffolding
+* Thu Oct 08 2026 openOODA-tools <ops@openooda.org> - 0.2.0-1
+- Sovereign pure openOODA panel border with dual CLI/MCP interface

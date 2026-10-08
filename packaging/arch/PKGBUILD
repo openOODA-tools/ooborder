@@ -1,7 +1,7 @@
 # Maintainer: openOODA-tools <ops@openooda.org>
 pkgname=ooborder-bin
 _pkgname=ooborder
-pkgver=0.1.0
+pkgver=0.2.0
 pkgrel=1
 pkgdesc="Wraps stdin text blocks inside configurable border frames with titles."
 arch=('x86_64')

@@ -1,0 +1,121 @@
+// # ooborder CLI Options Parser
+//
+// Logline: Ingests command line arguments into typed panel border styling options.
+//
+// Setup: Pure argument decoding for border styles, margins, titles, and MCP server.
+//
+// Beats:
+//   1. Parse decimal integer values for horizontal and vertical padding.
+//   2. Define BorderOpts data structure covering styling and layout parameters.
+//   3. Handle flags for styles, titles, alignments, JSON mode, and MCP stdio server.
+
+pub type BorderOpts = struct {
+    action: String,
+    style: String,
+    title: String,
+    pad_x: Int,
+    pad_y: Int,
+    align: String,
+    json_mode: Bool,
+    file_path: String,
+    input_text: String
+};
+
+fn digit_val(c: String) -> Int {
+    if c == "0" { return 0; }
+    if c == "1" { return 1; }
+    if c == "2" { return 2; }
+    if c == "3" { return 3; }
+    if c == "4" { return 4; }
+    if c == "5" { return 5; }
+    if c == "6" { return 6; }
+    if c == "7" { return 7; }
+    if c == "8" { return 8; }
+    if c == "9" { return 9; }
+    return -1;
+}
+
+pub fn parse_int_str(s: String) -> Int {
+    let n: Int = chars_len(s);
+    let mut acc: Int = 0;
+    let mut i: Int = 0;
+    while i < n {
+        let d: Int = digit_val(char_at(s, i));
+        if d >= 0 {
+            acc = (acc * 10) + d;
+        }
+        i = i + 1;
+    }
+    return acc;
+}
+
+pub fn default_border_opts() -> BorderOpts {
+    return BorderOpts {
+        action: "run",
+        style: "single",
+        title: "",
+        pad_x: 1,
+        pad_y: 0,
+        align: "left",
+        json_mode: false,
+        file_path: "",
+        input_text: ""
+    };
+}
+
+pub fn parse_border_args(args: List[String]) -> BorderOpts {
+    let mut opts: BorderOpts = default_border_opts();
+    let n: Int = list_len(args);
+    let mut i: Int = 0;
+
+    while i < n {
+        let arg: String = list_get(args, i);
+
+        if arg == "-h" || arg == "--help" {
+            opts.action = "help";
+            return opts;
+        } else if arg == "-v" || arg == "--version" {
+            opts.action = "version";
+            return opts;
+        } else if arg == "--mcp" {
+            opts.action = "mcp";
+            return opts;
+        } else if arg == "-s" || arg == "--style" {
+            if i + 1 < n {
+                i = i + 1;
+                opts.style = list_get(args, i);
+            }
+        } else if arg == "-t" || arg == "--title" {
+            if i + 1 < n {
+                i = i + 1;
+                opts.title = list_get(args, i);
+            }
+        } else if arg == "-p" || arg == "--padding" {
+            if i + 1 < n {
+                i = i + 1;
+                let val: Int = parse_int_str(list_get(args, i));
+                opts.pad_x = val;
+            }
+        } else if arg == "--align" {
+            if i + 1 < n {
+                i = i + 1;
+                opts.align = list_get(args, i);
+            }
+        } else if arg == "--json" {
+            opts.json_mode = true;
+        } else if arg == "-f" || arg == "--file" {
+            if i + 1 < n {
+                i = i + 1;
+                opts.file_path = list_get(args, i);
+            }
+        } else if !str_starts_with(arg, "-") {
+            if chars_len(opts.input_text) == 0 && chars_len(opts.file_path) == 0 {
+                opts.input_text = arg;
+            }
+        }
+
+        i = i + 1;
+    }
+
+    return opts;
+}

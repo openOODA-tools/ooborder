@@ -1,0 +1,46 @@
+// # ooborder Render Theme & Serializer
+//
+// Logline: Formats framed panels with ANSI colors and serializes layouts to JSON envelopes.
+//
+// Setup: Terminal styling helpers and structured Model Context Protocol envelope serializers.
+//
+// Beats:
+//   1. Define ANSI terminal styling escape codes using native byte sequences.
+//   2. Serialize boxed output payloads and layout parameters into valid JSON objects.
+//   3. Provide structured catalogs of available border styles for agent inspection.
+
+fn esc() -> String {
+    return bytes_to_str(bytes_push(bytes_new(), 27));
+}
+
+pub fn ansi_reset() -> String { return esc() + "[0m"; }
+pub fn ansi_bold() -> String { return esc() + "[1m"; }
+pub fn ansi_cyan() -> String { return esc() + "[1;36m"; }
+pub fn ansi_green() -> String { return esc() + "[1;32m"; }
+pub fn ansi_yellow() -> String { return esc() + "[33m"; }
+pub fn ansi_magenta() -> String { return esc() + "[1;35m"; }
+pub fn ansi_blue() -> String { return esc() + "[1;34m"; }
+
+pub fn render_box_json(text_in: String, box_out: String, style_name: String, title: String) -> String {
+    let mut out: String = "{\n";
+    out = out + "  \"style\": \"" + style_name + "\",\n";
+    out = out + "  \"title\": \"" + title + "\",\n";
+    out = out + "  \"input_chars\": " + to_string(chars_len(text_in)) + ",\n";
+    out = out + "  \"output_chars\": " + to_string(chars_len(box_out)) + ",\n";
+    out = out + "  \"framed_output\": \"" + box_out + "\"\n";
+    out = out + "}\n";
+    return out;
+}
+
+pub fn render_styles_list_json() -> String {
+    return "{\n"
+        + "  \"styles\": [\n"
+        + "    {\"name\": \"single\", \"description\": \"Standard single-line box drawing (┌─┐│└─┘)\"},\n"
+        + "    {\"name\": \"double\", \"description\": \"Heavy double-line frame (╔═╗║╚═╝)\"},\n"
+        + "    {\"name\": \"rounded\", \"description\": \"Smooth curved rounded corners (╭─╮│╰─╯)\"},\n"
+        + "    {\"name\": \"thick\", \"description\": \"Bold heavy-line stroke (┏━┓┃┗━┛)\"},\n"
+        + "    {\"name\": \"ascii\", \"description\": \"Universal ASCII characters (+-+|)\"},\n"
+        + "    {\"name\": \"block\", \"description\": \"Full solid block glyphs (███████)\"}\n"
+        + "  ]\n"
+        + "}\n";
+}

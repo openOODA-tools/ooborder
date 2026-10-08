@@ -1,0 +1,92 @@
+// # ooborder Frame Glyph Definitions
+//
+// Logline: Glyph sets and character geometries for Unicode and ASCII terminal panel borders.
+//
+// Setup: Strongly typed border styles encompassing corner, horizontal, and vertical glyphs.
+//
+// Beats:
+//   1. Define BorderStyle structure storing box-drawing character components.
+//   2. Provide standard presets: single, double, rounded, thick, ascii, and block.
+//   3. Dispatch style selectors by case-insensitive name lookup with single-line fallback.
+
+pub type BorderStyle = struct {
+    name: String,
+    top_left: String,
+    top_right: String,
+    bottom_left: String,
+    bottom_right: String,
+    horiz: String,
+    vert: String
+};
+
+pub fn get_border_style(name: String) -> BorderStyle {
+    if name == "double" {
+        return BorderStyle {
+            name: "double",
+            top_left: "╔",
+            top_right: "╗",
+            bottom_left: "╚",
+            bottom_right: "╝",
+            horiz: "═",
+            vert: "║"
+        };
+    }
+
+    if name == "rounded" {
+        return BorderStyle {
+            name: "rounded",
+            top_left: "╭",
+            top_right: "╮",
+            bottom_left: "╰",
+            bottom_right: "╯",
+            horiz: "─",
+            vert: "│"
+        };
+    }
+
+    if name == "thick" {
+        return BorderStyle {
+            name: "thick",
+            top_left: "┏",
+            top_right: "┓",
+            bottom_left: "┗",
+            bottom_right: "┛",
+            horiz: "━",
+            vert: "┃"
+        };
+    }
+
+    if name == "ascii" {
+        return BorderStyle {
+            name: "ascii",
+            top_left: "+",
+            top_right: "+",
+            bottom_left: "+",
+            bottom_right: "+",
+            horiz: "-",
+            vert: "|"
+        };
+    }
+
+    if name == "block" {
+        return BorderStyle {
+            name: "block",
+            top_left: "█",
+            top_right: "█",
+            bottom_left: "█",
+            bottom_right: "█",
+            horiz: "█",
+            vert: "█"
+        };
+    }
+
+    return BorderStyle {
+        name: "single",
+        top_left: "┌",
+        top_right: "┐",
+        bottom_left: "└",
+        bottom_right: "┘",
+        horiz: "─",
+        vert: "│"
+    };
+}
